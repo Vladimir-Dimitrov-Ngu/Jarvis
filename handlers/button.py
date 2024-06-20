@@ -1,9 +1,10 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 
-
 selected_voice = {}
 answers = {"1": "Мужчина", "2": "Женщина"}
+
+
 async def voice_choose(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [
@@ -15,7 +16,9 @@ async def voice_choose(update: Update, context: CallbackContext) -> None:
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await update.message.reply_text("Кто с вами будет разговаривать", reply_markup=reply_markup)
+    await update.message.reply_text(
+        "Кто с вами будет разговаривать", reply_markup=reply_markup
+    )
 
 
 # Функция для обработки нажатий на кнопки

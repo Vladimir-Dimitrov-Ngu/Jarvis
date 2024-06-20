@@ -8,7 +8,6 @@ from config import catalog_id, secret_key, system_prompt
 
 def _get_response_yandex_gpt(original_context: list[dict], text: str):
     context = deepcopy(original_context)
-    prompt_gpt = f"{text}"
     sp = {
         "role": "system",
         "text": f"{system_prompt}",
@@ -30,7 +29,10 @@ def _get_response_yandex_gpt(original_context: list[dict], text: str):
     result = response.text
     json_data = json.loads(result)
     print(json_data)
-    return json_data["result"]["alternatives"][0]["message"]["text"], json_data["result"]["usage"]["totalTokens"]
+    return (
+        json_data["result"]["alternatives"][0]["message"]["text"],
+        json_data["result"]["usage"]["totalTokens"],
+    )
 
 
 if __name__ == "__main__":

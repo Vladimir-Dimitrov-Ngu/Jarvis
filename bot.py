@@ -1,18 +1,13 @@
 import time
 
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    filters,
-    CallbackQueryHandler,
-)
+from telegram.ext import (ApplicationBuilder, CallbackQueryHandler,
+                          CommandHandler, MessageHandler, filters)
 
 import config
-from handlers.common_handlers import cancel, help, start, clear_context, analytics
-from handlers.advanced_handlers import voice, voice_message, logger
-from handlers.button import voice_choose, voice_button
-
+from handlers.advanced_handlers import logger, voice, voice_message
+from handlers.button import voice_button, voice_choose
+from handlers.common_handlers import (analytics, cancel, clear_context, help,
+                                      start)
 
 COMMAND_HANDLERS = {
     "start": start,
