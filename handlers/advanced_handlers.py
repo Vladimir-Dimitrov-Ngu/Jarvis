@@ -28,19 +28,24 @@ async def voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def voice_message(update: Update, context: CallbackContext):
     id = update.message.from_user["id"]
+    logger.info(f'Processing message from user {id}')
     if user_states.get(id, False):
-        logger.info(f'Get context for {id}')
+        logger.info(f'Getting context for {id}')
         context_message = await get_row(SELECT_CONTEXT.format(telegram_id=id))
         if context_message is None:
             context_message = []
         else:
             try:
                 context_message = loads(context_message["context"])
-            except:
+                logger.info(f'Loaded context for {id}: {context_message}')
+            except Exception as e:
+                logger.error(f'Error loading context for {id}: {e}')
                 context_message = []
-        logger.info(f'Get voice {id}')
+        logger.info(f'Getting voice message for {id}')
         voice = update.message.voice
         file_id = voice.file_id
+        logger.info(f'Voice message file id for {id}: {file_id}')
+
         new_file = await context.bot.get_file(file_id)
         file_path = os.path.join("downloads", f"{file_id}.ogg")
         await new_file.download_to_drive(file_path)
@@ -50,7 +55,7 @@ async def voice_message(update: Update, context: CallbackContext):
         context_message.append({"role": "assistant", "text": gpt_answer})
         if selected_voice.get(id, "2") == "2":
             tts = gTTS(text=gpt_answer, lang="ru")
-            tts.save("voice.ogg")
+            tts.save("voice_clone/outputs/voice.ogg")
             with open("voice_clone/outputs/voice.ogg", "rb") as audio:
                 await context.bot.send_voice(chat_id=update.effective_chat.id, voice=audio)
         else:

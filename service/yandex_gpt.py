@@ -26,7 +26,7 @@ def _get_response_yandex_gpt(original_context: list[dict], text: str):
         "Authorization": f"Api-Key {secret_key}",
     }
 
-    response = requests.post(url, headers=headers, json=prompt)
+    response = requests.post(url, headers=headers, json=prompt, timeout=10)
     result = response.text
     json_data = json.loads(result)
     print(json_data)
