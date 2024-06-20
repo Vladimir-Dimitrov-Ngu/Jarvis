@@ -1,7 +1,12 @@
 import time
 
-from telegram.ext import (ApplicationBuilder, CommandHandler, MessageHandler,
-                          filters, CallbackQueryHandler)
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    filters,
+    CallbackQueryHandler,
+)
 
 import config
 from handlers.common_handlers import cancel, help, start, clear_context, analytics
@@ -13,7 +18,7 @@ COMMAND_HANDLERS = {
     "start": start,
     "help": help,
     "cancel": cancel,
-    "voice":voice,
+    "voice": voice,
     "clear": clear_context,
     "analytics": analytics,
     "voice_choose": voice_choose,
@@ -32,5 +37,5 @@ if __name__ == "__main__":
     application.add_handler(CallbackQueryHandler(voice_button))
 
     time_to_start = round(time.time() - start_time, 2)
-    logger.info(f'It took {time_to_start} to start the application')
+    logger.info(f"It took {time_to_start} to start the application")
     application.run_polling()
