@@ -12,6 +12,7 @@
 9. [Future features](#future-features)
 
 
+
 ## Description:
 bot_jarviis is a powerful and versatile chatbot designed to assist users with various tasks. It is built using advanced natural language processing techniques and can understand and respond to user queries in a human-like manner. Whether you need help with information retrieval, task automation, or just want to have a friendly conversation, bot_jarviis is here to assist you.
 
@@ -22,7 +23,8 @@ bot_jarviis is a powerful and versatile chatbot designed to assist users with va
 - Information Retrieval: bot_jarviis can search the web and retrieve relevant information based on user queries, providing quick and accurate answers.
 - Conversation Mode: Engage in a friendly conversation with bot_jarviis and enjoy its witty and intelligent responses.
 - Customization: bot_jarviis can be easily customized and extended to suit your specific needs. Add new functionalities or integrate it with other systems seamlessly.
-
+### ML-Design
+![system_design](design.png)
 ## Installation:
 1. Clone the repository: `git clone https://github.com/vladimirdimitrov/bot_jarviis.git`
 2. Navigate to the project directory: `cd bot_jarviis`
