@@ -24,7 +24,7 @@ bot_jarviis is a powerful and versatile chatbot designed to assist users with va
 - Conversation Mode: Engage in a friendly conversation with bot_jarviis and enjoy its witty and intelligent responses.
 - Customization: bot_jarviis can be easily customized and extended to suit your specific needs. Add new functionalities or integrate it with other systems seamlessly.
 ### ML-Design
-![system_design](design.png)
+![system_design](https://github.com/Vladimir-Dimitrov-Ngu/Jarvis/blob/master/desing.png)
 ## Installation:
 1. Clone the repository: `git clone https://github.com/vladimirdimitrov/bot_jarviis.git`
 2. Navigate to the project directory: `cd bot_jarviis`
