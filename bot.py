@@ -4,10 +4,10 @@ from telegram.ext import (ApplicationBuilder, CallbackQueryHandler,
                           CommandHandler, MessageHandler, filters)
 
 import config
-from handlers.advanced_handlers import logger, voice, voice_message
 from handlers.button import voice_button, voice_choose
 from handlers.common_handlers import (analytics, cancel, clear_context, help,
                                       start)
+from handlers.voice_handler import logger, voice, voice_message
 
 COMMAND_HANDLERS = {
     "start": start,

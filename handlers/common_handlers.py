@@ -4,7 +4,7 @@ from telegram.ext import ContextTypes
 import scripts.message_text as message_text
 from database.database_manager import get_row, insert_into_db
 from database.sql_query import DELETE_CONTEXT, SELECT_COUNT_ANSWERS
-from handlers.advanced_handlers import user_states
+from handlers.voice_handler import user_states
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -43,14 +43,15 @@ async def analytics(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id, text="Вы еще не общались с ботом"
         )
     else:
-        tokens, count, cost = (
+        tokens, count, cost, toxic_rating = (
             counts["tokens_output"],
             counts["count_answers"],
             round(counts["cost"], 3),
+            counts["toxic_rating"],
         )
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"Количество использованных токенов: {tokens}\nКоличество обращений: {count}\nПотрачено рублей: {cost}",
+            text=f"Количество использованных токенов: {tokens}\nКоличество обращений: {count}\nПотрачено рублей: {cost}\nКоличество токсичных сообщений: {toxic_rating}",
         )
 
 

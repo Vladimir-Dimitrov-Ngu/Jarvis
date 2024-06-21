@@ -12,9 +12,13 @@ from database.sql_query import (
     INSERT_TOTAL_TOKENS,
     SELECT_CONTEXT,
     SELECT_COUNT_ANSWERS,
+    UPDATE_TOXIC_RATING,
 )
 from handlers.button import selected_voice
 from scripts.utils import logger_init
+from service.calculation_classifier import calc_classify
+from service.rag import rag_activation
+from service.toxic_classifier import bert_toxic
 from service.tts import text_to_speech
 from service.whisper import preprocess_audio
 from service.yandex_gpt import _get_response_yandex_gpt
@@ -35,6 +39,37 @@ async def voice_message(update: Update, context: CallbackContext):
     id = update.message.from_user["id"]
     logger.info(f"Processing message from user {id}")
     if user_states.get(id, False):
+        logger.info(f"Getting voice message for {id}")
+        voice = update.message.voice
+        file_id = voice.file_id
+        logger.info(f"Voice message file id for {id}: {file_id}")
+
+        new_file = await context.bot.get_file(file_id)
+        file_path = os.path.join("downloads", f"{file_id}.ogg")
+        await new_file.download_to_drive(file_path)
+        text = preprocess_audio(file_path)
+        toxic_bool = bert_toxic(text)
+        if toxic_bool:
+            await update.message.reply_text(
+                "Ваше сообщение слишком грубое, будьте немного вежливее."
+            )
+            await insert_into_db(UPDATE_TOXIC_RATING.format(telegram_id=id))
+            return
+        answer_rag = rag_activation(text)
+        if answer_rag:
+            await update.message.reply_text(f"{answer_rag[0]}")
+            return
+        if calc_classify(text):
+            await update.message.reply_text(
+                "Я пока не умею считать. Попробуйте задать другой вопрос."
+            )
+            return
+            # tts = gTTS(text=answer_rag[0], lang="ru")
+            # tts.save("voice_clone/outputs/voice.ogg")
+            # with open("voice_clone/outputs/voice.ogg", "rb") as audio:
+            #     await context.bot.send_voice(
+            #         chat_id=update.effective_chat.id, voice=audio
+            #     )
         logger.info(f"Getting context for {id}")
         context_message = await get_row(SELECT_CONTEXT.format(telegram_id=id))
         if context_message is None:
@@ -46,15 +81,6 @@ async def voice_message(update: Update, context: CallbackContext):
             except Exception as e:
                 logger.error(f"Error loading context for {id}: {e}")
                 context_message = []
-        logger.info(f"Getting voice message for {id}")
-        voice = update.message.voice
-        file_id = voice.file_id
-        logger.info(f"Voice message file id for {id}: {file_id}")
-
-        new_file = await context.bot.get_file(file_id)
-        file_path = os.path.join("downloads", f"{file_id}.ogg")
-        await new_file.download_to_drive(file_path)
-        text = preprocess_audio(file_path)
         context_message.append({"role": "user", "text": text})
         gpt_answer, total_tokens = _get_response_yandex_gpt(context_message, text)
         context_message.append({"role": "assistant", "text": gpt_answer})
@@ -83,13 +109,19 @@ async def voice_message(update: Update, context: CallbackContext):
         if counts is None:
             count_answers = 1
             count_tokens = int(total_tokens)
+            toxic_rating = 0
         else:
             count_answers = int(counts["count_answers"]) + 1
             count_tokens = int(counts["tokens_output"]) + int(total_tokens)
+            toxic_rating = int(counts["toxic_rating"])
         cost = round(count_tokens * 0.0002, 5)
         await insert_into_db(
             INSERT_TOTAL_TOKENS.format(
-                telegram_id=id, count=count_answers, tokens=count_tokens, cost=cost
+                telegram_id=id,
+                count=count_answers,
+                tokens=count_tokens,
+                cost=cost,
+                toxic_rating=toxic_rating,
             )
         )
     else:

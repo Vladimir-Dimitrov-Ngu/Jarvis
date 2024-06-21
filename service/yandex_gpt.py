@@ -28,7 +28,6 @@ def _get_response_yandex_gpt(original_context: list[dict], text: str):
     response = requests.post(url, headers=headers, json=prompt, timeout=10)
     result = response.text
     json_data = json.loads(result)
-    print(json_data)
     return (
         json_data["result"]["alternatives"][0]["message"]["text"],
         json_data["result"]["usage"]["totalTokens"],

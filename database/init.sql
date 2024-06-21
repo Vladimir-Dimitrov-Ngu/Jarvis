@@ -18,5 +18,6 @@ CREATE TABLE analytics  (
     id INTEGER PRIMARY KEY NOT NULL,
     count_answers INTEGER,
     tokens_output INTEGER,
-    cost FLOAT
+    cost FLOAT,
+    toxic_rating FLOAT
 );
